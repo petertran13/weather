@@ -1,11 +1,8 @@
 <?php
 
+use App\Http\Controllers\WeatherDataController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
-Route::get('/', function () {
-    return Inertia::render('welcome');
-})->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
@@ -13,9 +10,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 });
 // Weather route
-Route::get('/weather', function () {
-    return Inertia::render('weatherPage');  // This will map to 'resources/js/pages/WeatherPage.tsx'
+Route::get('/', function () {
+    return Inertia::render('weatherPage');
 });
-
+Route::post('/weather', [WeatherDataController::class, 'store']);
+Route::middleware(['cors'])->group(function () {
+    Route::post('/weather', [WeatherDataController::class, 'store']);
+});
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

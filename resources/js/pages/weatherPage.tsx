@@ -1,6 +1,6 @@
 // `pages/WeatherPage.tsx`
 import React from 'react';
-import Weather from '../components/weather'; // Adjust the import path as necessary
+import Weather from '../components/weather';
 
 const weatherPage: React.FC = () => {
     return (
