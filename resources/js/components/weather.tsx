@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-// Define the shape of the weather data response
+
 interface WeatherData {
     main: {
         temp: number;
@@ -20,7 +20,7 @@ const Weather = () => {
     useEffect(() => {
         const API_URL = "https://api.openweathermap.org/data/2.5/weather?q=Odense&units=Metric&APPID=799070f82e616c87e1f73a8c683cfa24";
 
-        axios.get<WeatherData>(API_URL) // Type the response to match the WeatherData structure
+        axios.get<WeatherData>(API_URL)// Type the response to match the WeatherData structure
             .then(response => {
                 setWeather(response.data);
 

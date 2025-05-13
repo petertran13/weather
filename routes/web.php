@@ -14,8 +14,6 @@ Route::get('/', function () {
     return Inertia::render('weatherPage');
 });
 Route::post('/weather', [WeatherDataController::class, 'store']);
-Route::middleware(['cors'])->group(function () {
-    Route::post('/weather', [WeatherDataController::class, 'store']);
-});
+Route::get('/weather', [WeatherDataController::class, 'index']);
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
