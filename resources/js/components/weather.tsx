@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-
 interface WeatherData {
     main: {
         temp: number;
@@ -12,10 +11,18 @@ interface WeatherData {
         speed: number;
     };
 }
-
+interface StoredWeatherData {
+    city: string;
+    temperature: number;
+    description: string;
+    wind_speed: number;
+    humidity: number;
+    created_at: string;
+}
 const Weather = () => {
     // Specify the type of weather state
     const [weather, setWeather] = useState<WeatherData | null>(null);
+    const [storedWeather, setStoredWeather] = useState<StoredWeatherData[]>([]);
 
     useEffect(() => {
         const API_URL = "https://api.openweathermap.org/data/2.5/weather?q=Odense&units=Metric&APPID=799070f82e616c87e1f73a8c683cfa24";
@@ -38,6 +45,15 @@ const Weather = () => {
             .catch(error => console.error("Error fetching weather:", error));
     }, []);
 
+    useEffect(() => {
+        axios.get<StoredWeatherData[]>('/weather')
+            .then(response => {
+                console.log(response.data);
+                setStoredWeather(response.data);
+            })
+            .catch(error => console.error("Error fetching stored weather data:", error));
+    }, []);
+
     return (
         <div>
             <h2>Weather in Odense</h2>
@@ -50,6 +66,24 @@ const Weather = () => {
                 </div>
             ) : (
                 <p>Loading...</p>
+            )}
+            <h2>Stored Weather Data</h2>
+            {storedWeather.length > 0 ? (
+                <div>
+                    {storedWeather.map((data, index) => (
+                        <div key={index}>
+                            <p>🏙️ City: {data.city}</p>
+                            <p>🌡️ Temperature: {data.temperature}°C</p>
+                            <p>🌤️ Weather: {data.description}</p>
+                            <p>💨 Wind Speed: {data.wind_speed} m/s</p>
+                            <p>💧 Humidity: {data.humidity}%</p>
+                            <p>   Date: {data.created_at}%</p>
+                            <hr />
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <p>No stored weather data available.</p>
             )}
         </div>
     );
