@@ -25,33 +25,36 @@ const Weather = () => {
     const [storedWeather, setStoredWeather] = useState<StoredWeatherData[]>([]);
 
     useEffect(() => {
-        const API_URL = "https://api.openweathermap.org/data/2.5/weather?q=Odense&units=Metric&APPID=799070f82e616c87e1f73a8c683cfa24";
+        const API_URL = 'https://api.openweathermap.org/data/2.5/weather?q=Odense&units=Metric&APPID=799070f82e616c87e1f73a8c683cfa24';
 
-        axios.get<WeatherData>(API_URL)// Type the response to match the WeatherData structure
-            .then(response => {
+        axios
+            .get<WeatherData>(API_URL) // Type the response to match the WeatherData structure
+            .then((response) => {
                 setWeather(response.data);
 
                 // Store weather data in the database
-                axios.post('/weather', {
-                    city: 'Odense',
-                    temperature: response.data.main.temp,
-                    description: response.data.weather[0].description,
-                    wind_speed: response.data.wind.speed,
-                    humidity: response.data.main.humidity,
-                })
+                axios
+                    .post('/weather', {
+                        city: 'Odense',
+                        temperature: response.data.main.temp,
+                        description: response.data.weather[0].description,
+                        wind_speed: response.data.wind.speed,
+                        humidity: response.data.main.humidity,
+                    })
                     .then(() => console.log('Weather data stored successfully'))
-                    .catch(error => console.error('Error storing weather data:', error));
+                    .catch((error) => console.error('Error storing weather data:', error));
             })
-            .catch(error => console.error("Error fetching weather:", error));
+            .catch((error) => console.error('Error fetching weather:', error));
     }, []);
 
     useEffect(() => {
-        axios.get<StoredWeatherData[]>('/weather')
-            .then(response => {
+        axios
+            .get<StoredWeatherData[]>('/weather')
+            .then((response) => {
                 console.log(response.data);
                 setStoredWeather(response.data);
             })
-            .catch(error => console.error("Error fetching stored weather data:", error));
+            .catch((error) => console.error('Error fetching stored weather data:', error));
     }, []);
 
     return (
@@ -77,7 +80,11 @@ const Weather = () => {
                             <p>🌤️ Weather: {data.description}</p>
                             <p>💨 Wind Speed: {data.wind_speed} m/s</p>
                             <p>💧 Humidity: {data.humidity}%</p>
-                            <p>   Date: {data.created_at}%</p>
+                            <p>
+                                📅 Date: {new Date(data.created_at).toLocaleDateString('da-DK')}, Time:{' '}
+                                {new Date(data.created_at).toLocaleTimeString('da-DK', { hour12: false })}
+                            </p>
+
                             <hr />
                         </div>
                     ))}
