@@ -26,6 +26,29 @@ const Weather = () => {
     const [storedWeather, setStoredWeather] = useState<StoredWeatherData[]>([]);
     const [city, setCity] = useState("");
 
+    // 🌗 Dark/light mode state
+    const [darkMode, setDarkMode] = useState(() => {
+        if (typeof window !== "undefined") {
+            return localStorage.getItem("theme") === "dark" ||
+                (!localStorage.getItem("theme") &&
+                    window.matchMedia("(prefers-color-scheme: dark)").matches);
+        }
+        return false;
+    });
+
+    useEffect(() => {
+        const root = document.documentElement;
+        if (darkMode) {
+            root.classList.add("dark");
+            localStorage.setItem("theme", "dark");
+        } else {
+            root.classList.remove("dark");
+            localStorage.setItem("theme", "light");
+        }
+    }, [darkMode]);
+
+    useEffect(() => {
+        const API_URL = 'https://api.openweathermap.org/data/2.5/weather?q=Odense&units=Metric&APPID=799070f82e616c87e1f73a8c683cfa24';
     const fetchWeather = (cityName: string) => {
         const API_URL = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=metric&appid=799070f82e616c87e1f73a8c683cfa24`;
 
@@ -88,6 +111,32 @@ const Weather = () => {
                 ) : (
                     <p>Loading...</p>
                 )}
+        <div className="max-w-4xl mx-auto p-4">
+            {/* 🌗 Theme toggle button */}
+            <div className="flex justify-end mb-4">
+                <button
+                    onClick={() => setDarkMode(prev => !prev)}
+                    className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-black dark:text-white shadow"
+                >
+                    Toggle {darkMode ? "Light" : "Dark"} Mode
+                </button>
+            </div>
+
+            <h2 className="text-2xl font-bold mb-4">Weather in Odense</h2>
+            {weather ? (
+                <div className="bg-white dark:bg-gray-800 dark:text-white shadow rounded-lg p-4 mb-6">
+                    <p>🌡️ Temperature: {weather.main.temp}°C</p>
+                    <p>🌤️ Weather: {weather.weather[0].description}</p>
+                    <p>💨 Wind Speed: {weather.wind.speed} m/s</p>
+                    <p>💧 Humidity: {weather.main.humidity}%</p>
+                    <p>
+                        📅 Date: {new Date().toLocaleDateString('da-DK')},
+                        Time: {new Date().toLocaleTimeString('da-DK', { hour12: false })}
+                    </p>
+                </div>
+            ) : (
+                <p>Loading...</p>
+            )}
 
                 <h2 className="text-2xl font-bold mb-4">Stored Weather Data</h2>
                 {storedWeather.length > 0 ? (
